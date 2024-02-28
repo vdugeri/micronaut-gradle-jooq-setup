@@ -2,7 +2,7 @@ version: '3.8'
 services:
   postgres:
     image: postgres:14-alpine
-    container_name: order-substitution-postgres
+    container_name: example-service
     restart: always
     environment:
       - POSTGRES_SERVICE_USER
@@ -13,5 +13,3 @@ services:
       - POSTGRES_SCHEMA
     ports:
       - ${POSTGRES_PORT}:5432
-    volumes:
-      - ./local-setup/initdb.sh:/docker-entrypoint-initdb.d/initdb.sh
