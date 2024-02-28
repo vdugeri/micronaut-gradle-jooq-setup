@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:14-alpine
+    container_name: order-substitution-postgres
+    restart: always
+    environment:
+      - POSTGRES_SERVICE_USER
+      - POSTGRES_SERVICE_PASSWORD
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+      - POSTGRES_SCHEMA
+    ports:
+      - ${POSTGRES_PORT}:5432
+    volumes:
+      - ./local-setup/initdb.sh:/docker-entrypoint-initdb.d/initdb.sh

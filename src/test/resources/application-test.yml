@@ -1,0 +1,29 @@
+micronaut:
+  server:
+    port: 8088
+  application:
+    name: nenastores
+    run-env: test
+    version: ${SERVICE_VERSION:0.0.1}
+  security:
+    enabled: false
+  http:
+    services:
+
+flyway:
+  datasources:
+    migration:
+      enabled: true
+      locations: classpath:migrations
+
+jooq:
+  r2dbc-datasources:
+    default:
+      sql-dialect: Postgres
+
+twilio:
+  accountSid: disabled
+  accountToken: disabled
+  usNumber: disabled
+  ukNumber: disabled
+  textsEnabled: false

@@ -1,0 +1,48 @@
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+*.lock.hcl
+
+# System
+.DS_Store
+Thumbs.db
+
+# Build
+.gradle
+bin/
+build/
+micronaut-cli.yml
+out/
+target/
+
+# Log files
+*.log
+
+# Local secrets
+.env
+src/main/resources/application-local.yml
+
+# IDEs
+.idea
+*.iml
+*.iml
+*.ipr
+*.iws
+.vscode
+.project
+.settings
+.classpath
+.factorypath
+
+# Yarn
+node_modules/
+yarn.lock
+package-lock.json
+
+# Hygen
+_templates/

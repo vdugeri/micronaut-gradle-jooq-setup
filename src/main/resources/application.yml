@@ -1,0 +1,54 @@
+endpoints:
+  health:
+    enabled: true
+    sensitive: false
+    discovery-client:
+      enabled: false
+    jdbc:
+      enabled: false
+    r2dbc:
+      enabled: false
+  metrics:
+    enabled: false
+    sensitive: false
+
+jackson:
+  serialization-inclusion: ALWAYS # Include empty arrays in JSON output
+  serialization:
+    indent-output: true # Pretty-print JSON
+    writeDatesAsTimestamps: false # write as timestamp
+
+
+netty:
+  default:
+    allocator:
+      max-order: 3
+logger:
+  levels:
+    io.micronaut.http.server: TRACE
+    io.micronaut.http.client: TRACE
+
+micronaut:
+  application:
+    name: student-service
+  router:
+    static-resources:
+      swagger:
+        paths: classpath:META-INF/swagger
+        mapping: /swagger/**
+      swagger-ui:
+        paths: classpath:META-INF/swagger/views/swagger-ui
+        mapping: /swagger-ui/**
+  server:
+    port: 8080
+    thread-selection: AUTO
+    cors:
+      enabled: true
+      multipart:
+        enabled: true
+        max-file-size: 2097153
+aws:
+  accessKeyId: ${AWS_ACCESS_KEY_ID}
+  secretKey: ${AWS_SECRET_KEY}
+  region: ${AWS_REGION}
+  categories-bucket: ${S3_CATEGORIES_BUCKET}

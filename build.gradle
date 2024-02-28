@@ -1,0 +1,238 @@
+plugins {
+  id("co.uzzu.dotenv.gradle") version "2.0.0"
+  id("com.github.johnrengelman.shadow") version "8.1.1"
+  id("io.micronaut.application") version "4.3.0"
+  id("io.micronaut.aot") version "4.3.0"
+  id('maven-publish')
+  id("nu.studer.jooq") version "8.2"
+}
+
+group = "com.infelsoft.student"
+
+sourceSets {
+  generated {
+    java {
+      srcDir "${buildDir}/generated/main/java"
+    }
+  }
+}
+
+repositories {
+  mavenLocal()
+//  mavenCentral()
+  maven {
+    url = uri("https://repo.maven.apache.org/maven2")
+  }
+}
+
+dependencies {
+  // Micronaut core dependencies
+  annotationProcessor("io.micronaut:micronaut-http-validation")
+  annotationProcessor("io.micronaut.security:micronaut-security-annotations")
+  implementation("io.micronaut:micronaut-jackson-databind")
+  implementation("io.micronaut:micronaut-management")
+  runtimeOnly("org.yaml:snakeyaml")
+  implementation("io.micronaut.validation:micronaut-validation")
+  // micronaut-reactor-http-client includes inject, http-client, and reactor.
+  implementation("io.micronaut.reactor:micronaut-reactor-http-client")
+
+  // immutables
+  annotationProcessor("org.immutables:value:2.9.2")
+  implementation("org.immutables:value:2.9.2")
+
+  // swagger
+  annotationProcessor("io.micronaut.openapi:micronaut-openapi")
+  implementation("io.swagger.core.v3:swagger-annotations")
+
+
+  // jackson
+  implementation("com.fasterxml.jackson.core:jackson-core")
+  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+
+  // others
+  implementation("org.apache.commons:commons-lang3:3.12.0") // provide useful string/number/stream utility functions
+
+  // testing
+  testImplementation('io.projectreactor:reactor-test:3.5.4')
+  testImplementation('org.mockito:mockito-core:5.3.0')
+  testImplementation("org.testcontainers:junit-jupiter")
+  testImplementation("org.testcontainers:r2dbc")
+  testImplementation("org.testcontainers:testcontainers")
+  testImplementation("org.testcontainers:postgresql")
+  testImplementation('org.junit.jupiter:junit-jupiter-params')
+  testImplementation('org.mockito:mockito-core')
+  testImplementation('org.mockito:mockito-junit-jupiter')
+
+  //database
+  annotationProcessor("io.micronaut.data:micronaut-data-processor")
+  implementation("io.micronaut.data:micronaut-data-r2dbc")
+  implementation('org.jooq:jooq:3.17.7')
+  implementation("io.micronaut.sql:micronaut-jooq")
+  runtimeOnly('io.micronaut.flyway:micronaut-flyway')
+  runtimeOnly('io.micronaut.sql:micronaut-jdbc-hikari') // used for flyway
+  runtimeOnly('io.r2dbc:r2dbc-pool:0.9.1.RELEASE')
+  runtimeOnly('org.postgresql:postgresql:')
+  runtimeOnly('org.postgresql:r2dbc-postgresql')
+  jooqGenerator('org.postgresql:postgresql:42.5.4')
+  runtimeOnly("org.flywaydb:flyway-database-postgresql")
+
+  // aws
+  implementation("software.amazon.awssdk:s3-transfer-manager:2.20.109")
+
+  // aot
+  aotPlugins platform("io.micronaut.platform:micronaut-platform:4.3.2")
+  aotPlugins("io.micronaut.security:micronaut-security-aot")
+
+  // security
+  implementation("io.micronaut.security:micronaut-security-jwt")
+  annotationProcessor("io.micronaut.security:micronaut-security-annotations")
+}
+
+application {
+  mainClass.set("com.infelsoft.student.Application")
+}
+
+description = "com.infelsoft.student:1.0.0-SNAPSHOT"
+
+java {
+  sourceCompatibility = JavaVersion.toVersion("17")
+  targetCompatibility = JavaVersion.toVersion("17")
+}
+
+graalvmNative.toolchainDetection = false
+micronaut {
+  runtime("netty")
+  testRuntime("junit5")
+  processing {
+    incremental(true)
+    annotations("com.infelsoft.student.*")
+  }
+  aot {
+    optimizeServiceLoading = false
+    convertYamlToJava = false
+    precomputeOperations = true
+    cacheEnvironment = true
+    optimizeClassLoading = true
+    deduceEnvironment = true
+    optimizeNetty = true
+    configurationProperties.put("micronaut.security.jwks.enabled","false")
+  }
+}
+
+/**
+ * Custom Tasks
+ */
+run.configure {
+  group("Local Development")
+  description("Run ${appName} in local run-mode, sourcing environment variables from .env file.")
+  doFirst {
+    environment = env.allVariables
+  }
+}
+
+// Custom Tasks
+tasks.register("debug") {
+  group("Local Development")
+  description("Run ${appName} locally with debug enabled at port ${debugPort}.")
+  doFirst {
+    run.configure {
+      doFirst {
+        def suspendOption = env.isPresent("DEBUG_SUSPEND") ? "${env.DEBUG_SUSPEND.value}" : "n"
+        jvmArgs "-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=${suspendOption},address=${debugPort}"
+      }
+    }
+  }
+  finalizedBy run
+}
+
+tasks.register('kill', Exec) {
+  group("Local Development")
+  description("Kill ${appName} running locally")
+  commandLine("local-setup/killserver.sh")
+}
+
+tasks.withType(JavaExec).configureEach {
+  jvmArgs "-Dmicronaut.environments=db,local"
+  if (project.findProperty("DEBUG") == "true") {
+    jvmArgs "-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=${debugPort}"
+  }
+}
+
+tasks.register('startdb', Exec) {
+  workingDir("./")
+  group("Local Development")
+  description("Docker-compose postgres locally and apply DB initialization. " +
+          "See docker-compose.yml for vars required in your .env file")
+  commandLine("local-setup/startdb.sh")
+}
+
+test {
+  group("Local Development")
+  description("Runs the test suite")
+  environment = env.allVariables
+  testLogging {
+    exceptionFormat = "full"
+    events "FAILED", "SKIPPED", "PASSED"
+    showStandardStreams = true
+    afterSuite { desc, result ->
+      if (!desc.parent) {
+        println "\nTest result: ${result.resultType}"
+        println "Test summary: ${result.testCount} tests, " +
+                "${result.successfulTestCount} succeeded, " +
+                "${result.failedTestCount} failed, " +
+                "${result.skippedTestCount} skipped"
+      }
+    }
+  }
+  useJUnitPlatform {}
+}
+
+/**
+ * Jooq generation
+ */
+jooq {
+  version = '3.17.7'
+
+  configurations {
+    main {
+      generateSchemaSourceOnCompilation = false
+
+      generationTool {
+        logging = org.jooq.meta.jaxb.Logging.DEBUG
+        jdbc {
+          driver = 'org.postgresql.Driver'
+          url = 'jdbc:postgresql://localhost:5432/students'
+          user = 'postgres'
+          password = 'root'
+          properties {
+            property {
+              key = 'PAGE_SIZE'
+              value = 2048
+            }
+          }
+        }
+        generator {
+          name = 'org.jooq.codegen.DefaultGenerator'
+          database {
+            name = 'org.jooq.meta.postgres.PostgresDatabase'
+            inputSchema = 'public'
+            includes = '.*'
+            excludes = 'flyway_schema_history'
+          }
+          generate {
+            deprecated = false
+            records = true
+            immutablePojos = false
+            pojos = true
+            fluentSetters = false
+          }
+          target {
+            packageName = 'com.infelsoft.student'
+            directory = 'src/generated/main/java'
+          }
+          strategy.name = "org.jooq.codegen.DefaultGeneratorStrategy"
+        }
+      }
+    }
+  }
+}
