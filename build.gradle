@@ -7,7 +7,7 @@ plugins {
   id("nu.studer.jooq") version "8.2"
 }
 
-group = "com.infelsoft.student"
+group = "com.example"
 
 sourceSets {
   generated {
@@ -89,10 +89,10 @@ dependencies {
 }
 
 application {
-  mainClass.set("com.infelsoft.student.Application")
+  mainClass.set("com.example.Application")
 }
 
-description = "com.infelsoft.student:1.0.0-SNAPSHOT"
+description = "com.example:1.0.0-SNAPSHOT"
 
 java {
   sourceCompatibility = JavaVersion.toVersion("17")
@@ -105,7 +105,7 @@ micronaut {
   testRuntime("junit5")
   processing {
     incremental(true)
-    annotations("com.infelsoft.student.*")
+    annotations("com.example.*")
   }
   aot {
     optimizeServiceLoading = false
@@ -201,7 +201,7 @@ jooq {
         logging = org.jooq.meta.jaxb.Logging.DEBUG
         jdbc {
           driver = 'org.postgresql.Driver'
-          url = 'jdbc:postgresql://localhost:5432/students'
+          url = 'jdbc:postgresql://localhost:5432/example'
           user = 'postgres'
           password = 'root'
           properties {
@@ -227,7 +227,7 @@ jooq {
             fluentSetters = false
           }
           target {
-            packageName = 'com.infelsoft.student'
+            packageName = 'com.example'
             directory = 'src/generated/main/java'
           }
           strategy.name = "org.jooq.codegen.DefaultGeneratorStrategy"

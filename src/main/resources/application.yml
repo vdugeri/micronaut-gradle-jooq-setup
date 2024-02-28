@@ -30,7 +30,9 @@ logger:
 
 micronaut:
   application:
-    name: student-service
+    name: micronaut-gradle-jooq-setup
+  security:
+    enabled: false
   router:
     static-resources:
       swagger:
@@ -47,8 +49,3 @@ micronaut:
       multipart:
         enabled: true
         max-file-size: 2097153
-aws:
-  accessKeyId: ${AWS_ACCESS_KEY_ID}
-  secretKey: ${AWS_SECRET_KEY}
-  region: ${AWS_REGION}
-  categories-bucket: ${S3_CATEGORIES_BUCKET}

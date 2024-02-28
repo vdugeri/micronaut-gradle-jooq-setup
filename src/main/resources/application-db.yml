@@ -9,7 +9,7 @@ r2dbc:
         maxIdleTime: PT5m
         backgroundEvictionInterval: PT5m
         minIdle: 0
-      url: r2dbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:students}?preparedStatementCacheQueries=0
+      url: r2dbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:example}?preparedStatementCacheQueries=0
       username: ${POSTGRES_USER:postgres}
       password: ${POSTGRES_PASSWORD:root}
       ssl: ${POSTGRES_SSL:false}
@@ -17,7 +17,7 @@ r2dbc:
 datasources:
   migration:
     # Migrations should connect directly to Postgres and do not run through pgBouncer (flyway issue with pgbouncer)
-    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:students}
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:example}
     driverClassName: org.postgresql.Driver
     username: ${POSTGRES_USER:postgres}
     password: ${POSTGRES_PASSWORD:root}
