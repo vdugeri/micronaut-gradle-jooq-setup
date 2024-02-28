@@ -1,6 +1,15 @@
-# Nenastores API
+# Micronaut-Gradle-jooq-setup
 
-We utilize MkDocs for documentation. Check it out [here](https://vdugeri.github.io/nenastores-api)!
+### Run
+``` ssh
+./gradlew run
+ ```
+
+### Generate JOOQ classes
+
+```ssh
+./gradlew generateJooq
+```
 
 ### API docs
 
