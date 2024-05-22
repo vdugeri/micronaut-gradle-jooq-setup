@@ -1,0 +1,31 @@
+[plugins]
+micronaut = { id = "io.micronaut.application", version = "4.3.0" }
+micronaut-aot = { id = "io.micronaut.aot", version = "4.3.0" }
+spotless = { id = "com.diffplug.spotless", version = "6.25.0" }
+dotenv = { id = "co.uzzu.dotenv.gradle", version = "2.0.0" }
+shadow-jar = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }
+jooq = { id = "nu.studer.jooq", version = "8.2" }
+
+
+[versions]
+
+jooq-postgres = "42.5.4"
+micronaut-platform = "4.3.2"
+s3 = "2.20.109"
+mockito-core = "5.3.0"
+reactor-test = "3.5.4"
+apache-commons = "3.12.0"
+immutables = "2.9.2"
+jooq = "3.17.7"
+r2dbc-pool = "0.9.1.RELEASE"
+
+[libraries]
+jooq-postgres= {group = "org.postgresql", name = "postgresql", version.ref = "jooq-postgres"}
+micronaut-platform = {group = "io.micronaut.platform", name = "micronaut-platform", version.ref = "micronaut-platform"}
+s3 = {group = "software.amazon.awssdk", name = "s3-transfer-manager", version.ref = "s3"}
+mockitor-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito-core"}
+reactor-test = { group = "io.projectreactor", name = "reactor-test", version.ref = "reactor-test"}
+apache-commons = { group = "org.apache.commons", name = "commons-lang3", version.ref = "apache-commons"}
+immutables = { group = "org.immutables", name = "value", version.ref = "immutables"}
+jooq = { group = "org.jooq", name = "jooq", version.ref = "jooq"}
+r2dbc-pool = { group = "io.r2dbc", name = "r2dbc-pool", version.ref = "r2dbc-pool"}
