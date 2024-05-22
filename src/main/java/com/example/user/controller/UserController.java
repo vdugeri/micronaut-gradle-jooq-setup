@@ -16,22 +16,24 @@ import reactor.core.publisher.Mono;
 @Tag(name = "users")
 public class UserController {
 
-  private final UserService userService;
+    private final UserService userService;
 
-  public UserController(UserService userService) {
-    this.userService = userService;
-  }
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
-  @Post
-  @ApiResponse(description = "create a new user", responseCode = "200",
-               content = @Content(schema = @Schema(implementation = UserResponse.class)))
-  public Mono<UserResponse> createUser(@Body UserRequest request) {
-    return userService.createUser(request)
-                      .flatMap(record -> Mono.just(new UserResponse(
+    @Post
+    @ApiResponse(
+            description = "create a new user",
+            responseCode = "200",
+            content = @Content(schema = @Schema(implementation = UserResponse.class)))
+    public Mono<UserResponse> createUser(@Body UserRequest request) {
+        return userService
+                .createUser(request)
+                .flatMap(record -> Mono.just(new UserResponse(
                         record.getId().toString(),
                         record.getFirstName(),
                         record.getLastName(),
-                        record.getCreatedAt()
-                      )));
-  }
+                        record.getCreatedAt())));
+    }
 }

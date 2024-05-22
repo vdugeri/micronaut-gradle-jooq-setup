@@ -8,8 +8,8 @@ import org.junit.jupiter.api.TestInstance;
  * Postgres or Redis
  * and/or those dependencies are fully mocked. This is useful for stateless functions or mocked outbound requests.
  */
-@MicronautTest(transactional = false, environments = {"test"})
+@MicronautTest(
+        transactional = false,
+        environments = {"test"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public interface UnitTest {
-
-}
+public interface UnitTest {}

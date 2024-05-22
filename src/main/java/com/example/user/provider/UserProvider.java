@@ -9,13 +9,13 @@ import reactor.core.publisher.Mono;
 @Singleton
 public class UserProvider {
 
-  private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
-  public UserProvider(UserRepository userRepository) {
-    this.userRepository = userRepository;
-  }
+    public UserProvider(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
-  public Mono<Users> createUser(UserRequest userRecord) {
-    return userRepository.createUser(userRecord);
-  }
+    public Mono<Users> createUser(UserRequest userRecord) {
+        return userRepository.createUser(userRecord);
+    }
 }
